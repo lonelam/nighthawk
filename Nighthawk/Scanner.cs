@@ -148,30 +148,33 @@ namespace Nighthawk
         // worker function for sending ARP requests
         private void WorkerSender()
         {
-            // get start/end IP
-            long[] range = Network.MaskToStartEnd(deviceInfo.IP, deviceInfo.Mask);
-
-            long startIP = range[0];
-            long endIP = range[1];
-            long currentIP = startIP;
-
-            var possibilities = (int)endIP - (int)startIP;
-
-            var sendQueue = new SendQueue(possibilities * 80);
-            var deviceIP = IPAddress.Parse(deviceInfo.IP);
-
-            // create ARP requests for all the hosts in our subnet);
-            while (currentIP <= endIP)
+            for (int i = 0; i < 3; i++)
             {
-                sendQueue.Add(GenerateARPRequest(Network.LongToIP(currentIP), deviceIP).Bytes);
+                // get start/end IP
+                long[] range = Network.MaskToStartEnd(deviceInfo.IP, deviceInfo.Mask);
 
-                currentIP++;
+                long startIP = range[0];
+                long endIP = range[1];
+                long currentIP = startIP;
+
+                var possibilities = (int)endIP - (int)startIP;
+
+                var sendQueue = new SendQueue(possibilities * 80);
+                var deviceIP = IPAddress.Parse(deviceInfo.IP);
+
+                // create ARP requests for all the hosts in our subnet);
+                while (currentIP <= endIP)
+                {
+                    sendQueue.Add(GenerateARPRequest(Network.LongToIP(currentIP), deviceIP).Bytes);
+
+                    currentIP++;
+                }
+
+                // send our queue
+                sendQueue.Transmit(device, SendQueueTransmitModes.Normal);
+                Thread.Sleep(3000);
             }
 
-            // send our queue
-            sendQueue.Transmit(device, SendQueueTransmitModes.Normal);
-
-            Thread.Sleep(3000);
 
             // stop other threads and stop scanning
             Started = false;
@@ -208,7 +211,7 @@ namespace Nighthawk
                     foreach (ARPPacket packet in threadQueueARP)
                     {
                         // if we have an ARP reply (response) and scanner is still active
-                        if (packet.Operation == ARPOperation.Response && Started)
+                        if (Started)
                         {
                             var ip = packet.SenderProtocolAddress;
                             var mac = packet.SenderHardwareAddress;

@@ -212,7 +212,7 @@ namespace Nighthawk
             {
                 sendQueue.Transmit(device, SendQueueTransmitModes.Normal);
 
-                Thread.Sleep(2500);
+                Thread.Sleep(300);
             }
 
             sendQueue.Dispose();
