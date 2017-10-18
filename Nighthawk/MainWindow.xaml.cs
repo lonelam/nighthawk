@@ -406,11 +406,7 @@ namespace Nighthawk
             SnifferResultList.Clear();
         }
 
-        // selected advanced mode
-        private void BSelectAdvancedMode_Click(object sender, RoutedEventArgs e)
-        {
-            GRModeSelect.Visibility = Visibility.Collapsed;
-        }
+        
 
         // selected quick attack mode
         private void BSelectQuickAttack_Click(object sender, RoutedEventArgs e)
@@ -418,28 +414,9 @@ namespace Nighthawk
             QuickAttack = true;
             BScanNetwork_Click(null, null);
 
-            // this can be false if scan throws an error
-            if (QuickAttack)
-            {
-                GRModeSelect.Visibility = Visibility.Collapsed;
-                GRQuickAttack.Visibility = Visibility.Visible;
-            }
+            
         }
-
-        // stop quick attack
-        private void BStopQuickAttack_Click(object sender, RoutedEventArgs e)
-        {
-            GRModeSelect.Visibility = Visibility.Visible;
-            GRQuickAttack.Visibility = Visibility.Collapsed;
-
-            QuickAttack = false;
-            if(Nighthawk.Sniffer.Started) BStartSniffer_Click(null, null);
-            if(Nighthawk.SSLStrip.Started) BStartSSLstrip_Click(null, null);
-            if(Nighthawk.ARPTools.SpoofingStarted) BStartARP_Click(null, null);
-
-            if(Nighthawk.NDTools.SpoofingStarted) BStartND_Click(null, null);
-        }
-
+        
         // current tab changed
         private void TCTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
